@@ -2,8 +2,7 @@ BASE = '''
 import paramiko
 
 client = paramiko.SSHClient()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  
-
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
 class ConnectGenerator:
     def __init__(self, username, hostname, port, password):
@@ -11,18 +10,17 @@ class ConnectGenerator:
         self.hostname = hostname
         self.port = port
         self.password = password
-
-        client.connect(hostname, port, username, password)        
+        client.connect(hostname, port=int(port), username=username, password=password)
 '''
 
 SSH = '''
     def ssh_ip(self):
-        return "ssh {}@{}" 
+        return "ssh {username}@{hostname}"
 '''
 
 PING = '''
     def ping_ip(self):
-        return "ping {}@{}"
+        return "ping {hostname}"
 '''
 
 IFCONFIG = '''
@@ -32,15 +30,15 @@ IFCONFIG = '''
 '''
 
 OBJ_CREATE = '''
-gen = ConnectGenerator('{}', '{}', '{}', '{}')
+gen = ConnectGenerator(username='{username}', hostname='{hostname}', port={port}, password='{password}')
 '''
 
 CALL_SSH = '''
-    print(gen.username())
+print(gen.ssh_ip())
 '''
 
 CALL_PING = '''
-    print(calc.sub_number())
+print(gen.ping_ip())
 '''
 
 CALL_IFCONFIG = '''

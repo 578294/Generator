@@ -1,52 +1,51 @@
 import random
-from test_gen_pattern import (BASE, SSH, PING, IFCONFIG, CALL_SSH, CALL_IFCONFIG, OBJ_CREATE, CALL_PING)
-
-class Connect:
-    def __init__(self, username, hostname):
-        self.username = username
-        self.hostname = hostname
-
-class Generator:
-
-    def call_ssh(self):
-        return CALL_SSH
-
-    def call_ping(self):
-        return CALL_PING
+import os
+from test_gen_pattern import (BASE, SSH, PING, IFCONFIG, CALL_SSH, CALL_PING,
+                              CALL_IFCONFIG, OBJ_CREATE)
 
 
 class ConnectGenerator:
     def settings(self):
-        self.actions = input('Введите пользователя и ip-адрес через запятую:'
-                             '\n1 - ssh'
-                             '\n2 - ping'
-                             '\n3 - ifconfig'
-                             '\nВыбранные действия: ').split(', ')
+        print(
+            "Выберите действия (через запятую):\n1 - ssh\n2 - ping\n3 - ifconfig")
+        self.actions = input("> ").strip().split(',')
         self.username = input('Введите имя пользователя: ')
-        self.hostname = input('Введите ip-адрес: ')
+        self.hostname = input('Введите IP-адрес: ')
         self.port = input('Укажите порт: ')
-        self.password = input('укажите пароль: ')
+        self.password = input('Укажите пароль: ')
 
     def generate(self):
         calls = []
-        with open(f'generate/NPC_{random.randint(1000, 9999)}.py',
-                  'w') as file:
+        os.makedirs('generate', exist_ok=True)
+        filename = f'generate/NPC_{random.randint(1000, 9999)}.py'
+
+        with open(filename, 'w') as file:
             file.write(BASE)
             if '1' in self.actions:
-                file.write(SSH.format(self.username, self.hostname))
+                file.write(
+                    SSH.format(username=self.username, hostname=self.hostname))
                 calls.append(CALL_SSH)
-            elif '2' in self.actions:
-                file.write(PING)
+            if '2' in self.actions:
+                file.write(PING.format(hostname=self.hostname))
                 calls.append(CALL_PING)
-            elif '3' in self.actions:
+            if '3' in self.actions:
                 file.write(IFCONFIG)
                 calls.append(CALL_IFCONFIG)
 
-            file.write(OBJ_CREATE.format(self.username, self.hostname, self.port, self.password))
-            calls = ''.join(calls)
-            file.write(calls)
+            file.write(OBJ_CREATE.format(
+                username=self.username,
+                hostname=self.hostname,
+                port=self.port,
+                password=self.password
+            ))
+            file.write(''.join(calls))
+
+        print(f"\nФайл {filename} успешно создан!")
+        print("Для запуска выполните команду в терминале:")
+        print(f"python {filename}")
 
 
-gen = ConnectGenerator()
-gen.settings()
-gen.generate()
+if __name__ == "__main__":
+    gen = ConnectGenerator()
+    gen.settings()
+    gen.generate()
