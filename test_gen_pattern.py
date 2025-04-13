@@ -26,7 +26,7 @@ PING = '''
 IFCONFIG = '''
     def ifconfig_ip(self):
         stdin, stdout, stderr = client.exec_command('ls -la')
-        print("Результат выполнения команды:", stdout.read().decode())
+        print("Result of command: ", stdout.read().decode())
 '''
 
 OBJ_CREATE = '''
