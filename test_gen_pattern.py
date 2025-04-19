@@ -15,18 +15,125 @@ class ConnectGenerator:
 
 SSH = '''
     def ssh_ip(self):
-        return "ssh {username}@{hostname}"
+        print("SSH Command: ssh {username}@{hostname} -p {port}".format(
+            username=self.username,
+            hostname=self.hostname,
+            port=self.port
+        ))
 '''
 
 PING = '''
     def ping_ip(self):
-        return "ping {hostname}"
+        stdin, stdout, stderr = client.exec_command('ping -c 4 {hostname}'.format(
+            hostname=self.hostname
+        ))
+        print("PING Results:")
+        print(stdout.read().decode())
 '''
 
 IFCONFIG = '''
     def ifconfig_ip(self):
-        stdin, stdout, stderr = client.exec_command('ls -la')
-        print("Result of command: ", stdout.read().decode())
+        stdin, stdout, stderr = client.exec_command('ifconfig')
+        print("Network Interfaces:")
+        print(stdout.read().decode())
+'''
+
+NETSTAT = '''
+    def netstat_ip(self):
+        stdin, stdout, stderr = client.exec_command('netstat -tulpn')
+        print("Active Connections:")
+        print(stdout.read().decode())
+'''
+
+NMAP = '''
+    def nmap_ip(self):
+        stdin, stdout, stderr = client.exec_command('nmap -p 22 {hostname}'.format(hostname=self.hostname))
+        print("Port Scan Results:")
+        print(stdout.read().decode())
+'''
+
+DF = '''
+    def df_ip(self):
+        stdin, stdout, stderr = client.exec_command('df -h')
+        print("Disk Usage:")
+        print(stdout.read().decode())
+'''
+
+HTOP = '''
+    def htop_ip(self):
+        stdin, stdout, stderr = client.exec_command('htop')
+        print("Processes:")
+        print(stdout.read().decode())
+'''
+
+UNAME = '''
+    def uname_ip(self):
+        stdin, stdout, stderr = client.exec_command('uname -a')
+        print("System Info:")
+        print(stdout.read().decode())
+'''
+
+LSB_RELEASE = '''
+    def lsb_release_ip(self):
+        stdin, stdout, stderr = client.exec_command('lsb_release -a')
+        print("OS Release:")
+        print(stdout.read().decode())
+'''
+
+FREE = '''
+    def free_ip(self):
+        stdin, stdout, stderr = client.exec_command('free -h')
+        print("Memory Usage:")
+        print(stdout.read().decode())
+'''
+
+UPTIME = '''
+    def uptime_ip(self):
+        stdin, stdout, stderr = client.exec_command('uptime')
+        print("Uptime:")
+        print(stdout.read().decode())
+'''
+
+WHOIS = '''
+    def whois_ip(self):
+        stdin, stdout, stderr = client.exec_command('whois {hostname}'.format(hostname=self.hostname))
+        print("Whois Info:")
+        print(stdout.read().decode())
+'''
+
+LSCPU = '''
+    def lscpu_ip(self):
+        stdin, stdout, stderr = client.exec_command('lscpu')
+        print("CPU Info:")
+        print(stdout.read().decode())
+'''
+
+LSBLK = '''
+    def lsblk_ip(self):
+        stdin, stdout, stderr = client.exec_command('lsblk')
+        print("Block Devices:")
+        print(stdout.read().decode())
+'''
+
+JOURNALCTL = '''
+    def journalctl_ip(self):
+        stdin, stdout, stderr = client.exec_command('journalctl -xe --no-pager')
+        print("System Logs:")
+        print(stdout.read().decode())
+'''
+
+DMESG = '''
+    def dmesg_ip(self):
+        stdin, stdout, stderr = client.exec_command('dmesg')
+        print("Kernel Messages:")
+        print(stdout.read().decode())
+'''
+
+VMSTAT = '''
+    def vmstat_ip(self):
+        stdin, stdout, stderr = client.exec_command('vmstat 1 5')
+        print("VM Statistics:")
+        print(stdout.read().decode())
 '''
 
 OBJ_CREATE = '''
@@ -34,13 +141,69 @@ gen = ConnectGenerator(username='{username}', hostname='{hostname}', port={port}
 '''
 
 CALL_SSH = '''
-print(gen.ssh_ip())
+gen.ssh_ip()
 '''
 
 CALL_PING = '''
-print(gen.ping_ip())
+gen.ping_ip()
 '''
 
 CALL_IFCONFIG = '''
 gen.ifconfig_ip()
+'''
+
+CALL_NETSTAT = '''
+gen.netstat_ip()
+'''
+
+CALL_NMAP = '''
+gen.nmap_ip()
+'''
+
+CALL_DF = '''
+gen.df_ip()
+'''
+
+CALL_HTOP = '''
+gen.htop_ip()
+'''
+
+CALL_UNAME = '''
+gen.uname_ip()
+'''
+
+CALL_LSB_RELEASE = '''
+gen.lsb_release_ip()
+'''
+
+CALL_FREE = '''
+gen.free_ip()
+'''
+
+CALL_UPTIME = '''
+gen.uptime_ip()
+'''
+
+CALL_WHOIS = '''
+gen.whois_ip()
+'''
+
+CALL_LSCPU = '''
+gen.lscpu_ip()
+'''
+
+CALL_LSBLK = '''
+gen.lsblk_ip()
+'''
+
+CALL_JOURNALCTL = '''
+gen.journalctl_ip()
+'''
+
+CALL_DMESG = '''
+gen.dmesg_ip()
+'''
+
+CALL_VMSTAT = '''
+gen.vmstat_ip()
 '''

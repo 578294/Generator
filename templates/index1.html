@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH Command Executor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input, button, .action-btn {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button, .action-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover, .action-btn:hover {
+            background-color: #218838;
+        }
+        .action-buttons {
+            display: none;
+            margin-top: 20px;
+        }
+        .action-btn {
+            background-color: #007bff;
+            margin: 5px 0;
+        }
+        .action-btn:hover {
+            background-color: #0056b3;
+        }
+        .status-message {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        #results {
+            margin-top: 20px;
+            display: none;
+        }
+        #commandOutput {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SSH Command Executor</h1>
+        
+        <div id="errorMessage" class="status-message error"></div>
+        <div id="successMessage" class="status-message success"></div>
+
+        <form id="sshForm">
+            <label for="hostname">Hostname/IP:</label>
+            <input type="text" id="hostname" name="hostname" required>
+            
+            <label for="port">Port (optional, default 22):</label>
+            <input type="number" id="port" name="port" placeholder="22" min="1" max="65535">
+            
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="button" onclick="showActionButtons()">Connect</button>
+        </form>
+
+        <div id="actionButtons" class="action-buttons">
+            <h3>Select Command:</h3>
+            <button class="action-btn" onclick="executeCommand('PING')">PING</button>
+            <button class="action-btn" onclick="executeCommand('IFCONFIG')">IFCONFIG</button>
+            <button class="action-btn" onclick="executeCommand('SSH')">SSH Connection</button>
+            <button class="action-btn" onclick="executeCommand('NETSTAT')">NETSTAT</button>
+            <button class="action-btn" onclick="executeCommand('DF')">Disk Usage</button>
+            <button class="action-btn" onclick="executeCommand('NMAP')">Port Scan (NMAP)</button>
+            <button class="action-btn" onclick="executeCommand('UNAME')">System Info</button>
+            <button class="action-btn" onclick="executeCommand('FREE')">Memory Usage</button>
+        </div>
+
+        <div class="loading" id="loadingIndicator">
+            <div class="loading-spinner"></div>
+            <p>Executing command...</p>
+        </div>
+
+        <div id="results">
+            <h3>Command Results:</h3>
+            <pre id="commandOutput"></pre>
+        </div>
+    </div>
+
+    <script>
+        function showMessage(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        function showActionButtons() {
+            const hostname = document.getElementById('hostname').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!hostname || !username || !password) {
+                showMessage('errorMessage', 'Please fill all required fields');
+                return;
+            }
+            
+            document.getElementById('actionButtons').style.display = 'block';
+            showMessage('successMessage', 'Connection parameters set. Select a command.');
+        }
+
+        async function executeCommand(action) {
+            const hostname = document.getElementById('hostname').value;
+            const port = document.getElementById('port').value || '22'; // Default to 22 if empty
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Show loading indicator
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+
+            try {
+                const formData = new FormData();
+                formData.append('hostname', hostname);
+                formData.append('port', port);
+                formData.append('username', username);
+                formData.append('password', password);
+                formData.append('action', action);
+
+                const response = await fetch('/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.text();
+                
+                document.getElementById('commandOutput').textContent = data;
+                document.getElementById('results').style.display = 'block';
+                showMessage('successMessage', 'Command executed successfully');
+            } catch (error) {
+                showMessage('errorMessage', 'Error executing command: ' + error.message);
+                console.error('Error:', error);
+            } finally {
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
