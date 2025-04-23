@@ -1,9 +1,27 @@
+"""
+Модуль test_gen_pattern.py содержит строковые шаблоны
+для генерации Python-скриптов, которые выполняют диагностику
+удаленного сервера через SSH-соединение.
+
+Все шаблоны разделены на:
+- BASE: основной шаблон с классом ConnectGenerator
+  для подключения по SSH
+- Командные шаблоны (SSH, PING, IFCONFIG и др.): методы
+  для выполнения конкретных команд
+- Шаблоны вызовов (CALL_SSH, CALL_PING и др.):
+  код для вызова соответствующих методов
+- OBJ_CREATE: шаблон для создания экземпляра ConnectGenerator
+"""
+
+# Основной шаблон класса для SSH-подключения
 BASE = '''
 import paramiko
 import time
 
 class ConnectGenerator:
-    def __init__(self, username, hostname, port, password):
+    """Основной класс для установки SSH-соединения с удаленным сервером."""
+    def __init__(self, username: str, hostname: str, port: str, password: str) -> None:
+        """Инициализирует подключение к SSH серверу."""
         self.username = username
         self.hostname = hostname
         self.port = port
@@ -11,7 +29,10 @@ class ConnectGenerator:
         self.client = None
         self.connect_with_retry()
 
-    def connect_with_retry(self, retries=3, delay=5):
+    def connect_with_retry(self, retries: int = 3, delay: int = 5) -> None:
+        """
+        Устанавливает соединение с сервером с повторными попытками при ошибках.
+        """
         for attempt in range(retries):
             try:
                 self.client = paramiko.SSHClient()
@@ -44,8 +65,9 @@ class ConnectGenerator:
                 time.sleep(delay)
 '''
 
-SSH = '''
-    def ssh_ip(self):
+# Шаблон метода для отображения SSH команды подключения
+SSH: str = '''
+    def ssh_ip(self) -> None:
         print("SSH Command: ssh {username}@{hostname} -p {port}".format(
             username=self.username,
             hostname=self.hostname,
@@ -53,8 +75,9 @@ SSH = '''
         ))
 '''
 
-PING = '''
-    def ping_ip(self):
+# Шаблон метода для выполнения команды ping
+PING: str = '''
+    def ping_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('ping -c 4 {hostname}'.format(
             hostname=self.hostname
         ))
@@ -62,179 +85,212 @@ PING = '''
         print(stdout.read().decode())
 '''
 
-IFCONFIG = '''
-    def ifconfig_ip(self):
+# Шаблон метода для отображения сетевых интерфейсов
+IFCONFIG: str = '''
+    def ifconfig_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('ifconfig')
         print("Network Interfaces:")
         print(stdout.read().decode())
 '''
 
-NETSTAT = '''
-    def netstat_ip(self):
+# Шаблон метода для просмотра активных соединений
+NETSTAT: str = '''
+    def netstat_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('netstat -tulpn')
         print("Active Connections:")
         print(stdout.read().decode())
 '''
 
-NMAP = '''
-    def nmap_ip(self):
+# Шаблон метода для сканирования портов
+NMAP: str = '''
+    def nmap_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('nmap -p 22 {hostname}'.format(hostname=self.hostname))
         print("Port Scan Results:")
         print(stdout.read().decode())
 '''
 
-DF = '''
-    def df_ip(self):
+# Шаблон метода для анализа дискового пространства
+DF: str = '''
+    def df_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('df -h')
         print("Disk Usage:")
         print(stdout.read().decode())
 '''
 
-HTOP = '''
-    def htop_ip(self):
+# Шаблон метода для мониторинга процессов
+HTOP: str = '''
+    def htop_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('htop')
         print("Processes:")
         print(stdout.read().decode())
 '''
 
-UNAME = '''
-    def uname_ip(self):
+# Шаблон метода для получения системной информации
+UNAME: str = '''
+    def uname_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('uname -a')
         print("System Info:")
         print(stdout.read().decode())
 '''
 
-LSB_RELEASE = '''
-    def lsb_release_ip(self):
+# Шаблон метода для получения информации о дистрибутиве
+LSB_RELEASE: str = '''
+    def lsb_release_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('lsb_release -a')
         print("OS Release:")
         print(stdout.read().decode())
 '''
 
-FREE = '''
-    def free_ip(self):
+# Шаблон метода для анализа использования памяти
+FREE: str = '''
+    def free_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('free -h')
         print("Memory Usage:")
         print(stdout.read().decode())
 '''
 
-UPTIME = '''
-    def uptime_ip(self):
+# Шаблон метода для проверки времени работы системы
+UPTIME: str = '''
+    def uptime_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('uptime')
         print("Uptime:")
         print(stdout.read().decode())
 '''
 
-WHOIS = '''
-    def whois_ip(self):
+# Шаблон метода для WHOIS запроса
+WHOIS: str = '''
+    def whois_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('whois {hostname}'.format(hostname=self.hostname))
         print("Whois Info:")
         print(stdout.read().decode())
 '''
 
-LSCPU = '''
-    def lscpu_ip(self):
+# Шаблон метода для получения информации о CPU
+LSCPU: str = '''
+    def lscpu_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('lscpu')
         print("CPU Info:")
         print(stdout.read().decode())
 '''
 
-LSBLK = '''
-    def lsblk_ip(self):
+# Шаблон метода для анализа блочных устройств
+LSBLK: str = '''
+    def lsblk_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('lsblk')
         print("Block Devices:")
         print(stdout.read().decode())
 '''
 
-JOURNALCTL = '''
-    def journalctl_ip(self):
+# Шаблон метода для просмотра системных логов
+JOURNALCTL: str = '''
+    def journalctl_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('journalctl -xe --no-pager')
         print("System Logs:")
         print(stdout.read().decode())
 '''
 
-DMESG = '''
-    def dmesg_ip(self):
+# Шаблон метода для просмотра сообщений ядра
+DMESG: str = '''
+    def dmesg_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('dmesg')
         print("Kernel Messages:")
         print(stdout.read().decode())
 '''
 
-VMSTAT = '''
-    def vmstat_ip(self):
+# Шаблон метода для мониторинга виртуальной памяти
+VMSTAT: str = '''
+    def vmstat_ip(self) -> None:
         stdin, stdout, stderr = self.client.exec_command('vmstat 1 5')
         print("VM Statistics:")
         print(stdout.read().decode())
 '''
 
-OBJ_CREATE = '''
+# Шаблон для создания объекта ConnectGenerator
+OBJ_CREATE: str = '''
 gen = ConnectGenerator(username='{username}', hostname='{hostname}', port={port}, password='{password}')
 '''
 
-CALL_SSH = '''
+# Шаблоны вызовов методов для SSH
+CALL_SSH: str = '''
 gen.ssh_ip()
 '''
 
-CALL_PING = '''
+# Шаблон вызова метода для проверки доступности хоста
+CALL_PING: str = '''
 gen.ping_ip()
 '''
 
-CALL_IFCONFIG = '''
+# Шаблон вызова метода для просмотра сетевых интерфейсов
+CALL_IFCONFIG: str = '''
 gen.ifconfig_ip()
 '''
 
-CALL_NETSTAT = '''
+# Шаблон вызова метода для просмотра активных соединений
+CALL_NETSTAT: str = '''
 gen.netstat_ip()
 '''
 
-CALL_NMAP = '''
+# Шаблон вызова метода для сканирования портов
+CALL_NMAP: str = '''
 gen.nmap_ip()
 '''
 
-CALL_DF = '''
+# Шаблон вызова метода для анализа дискового пространства
+CALL_DF: str = '''
 gen.df_ip()
 '''
 
-CALL_HTOP = '''
+# Шаблон вызова метода для мониторинга процессов
+CALL_HTOP: str = '''
 gen.htop_ip()
 '''
 
-CALL_UNAME = '''
+# Шаблон вызова метода для получения системной информации
+CALL_UNAME: str = '''
 gen.uname_ip()
 '''
 
-CALL_LSB_RELEASE = '''
+# Шаблон вызова метода для информации о дистрибутиве
+CALL_LSB_RELEASE: str = '''
 gen.lsb_release_ip()
 '''
 
-CALL_FREE = '''
+# Шаблон вызова метода для анализа использования памяти
+CALL_FREE: str = '''
 gen.free_ip()
 '''
 
-CALL_UPTIME = '''
+# Шаблон вызова метода для проверки времени работы системы
+CALL_UPTIME: str = '''
 gen.uptime_ip()
 '''
 
-CALL_WHOIS = '''
+# Шаблон вызова метода для WHOIS запроса
+CALL_WHOIS: str = '''
 gen.whois_ip()
 '''
 
-CALL_LSCPU = '''
+# Шаблон вызова метода для информации о процессоре
+CALL_LSCPU: str = '''
 gen.lscpu_ip()
 '''
 
-CALL_LSBLK = '''
+# Шаблон вызова метода для анализа блочных устройств
+CALL_LSBLK: str = '''
 gen.lsblk_ip()
 '''
 
-CALL_JOURNALCTL = '''
+# Шаблон вызова метода для просмотра системных логов
+CALL_JOURNALCTL: str = '''
 gen.journalctl_ip()
 '''
 
-CALL_DMESG = '''
+# Шаблон вызова метода для просмотра сообщений ядра
+CALL_DMESG: str = '''
 gen.dmesg_ip()
 '''
 
-CALL_VMSTAT = '''
+# Шаблон вызова метода для мониторинга виртуальной памяти
+CALL_VMSTAT: str = '''
 gen.vmstat_ip()
 '''

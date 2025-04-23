@@ -1,3 +1,10 @@
+"""
+Основной модуль для генерации диагностических скриптов в CLI-режиме.
+
+Класс ConnectGenerator предоставляет интерфейс для настройки
+и генерации скриптов.
+"""
+
 import random
 import os
 from test_gen_pattern import (BASE, SSH, PING, IFCONFIG, NETSTAT, NMAP, DF,
@@ -14,8 +21,10 @@ from test_gen_pattern import (BASE, SSH, PING, IFCONFIG, NETSTAT, NMAP, DF,
 
 
 class ConnectGenerator:
+    """Класс для генерации Python-скриптов диагностики сервера."""
 
-    def settings(self):
+    def settings(self) -> None:
+        """Запрашивает у пользователя настройки для генерации скрипта."""
         self.actions_map = {
             '1': ('SSH', SSH, CALL_SSH),
             '2': ('PING', PING, CALL_PING),
@@ -46,7 +55,8 @@ class ConnectGenerator:
         self.port = input('Укажите порт (по умолчанию 22): ') or '22'
         self.password = input('Укажите пароль: ')
 
-    def generate(self):
+    def generate(self) -> str:
+        """Генерирует Python-скрипт на основе выбранных настроек."""
         os.makedirs('generate', exist_ok=True)
         filename = f'generate/NPC_{random.randint(1000, 9999)}.py'
 

@@ -1,3 +1,12 @@
+"""
+Проект представляет собой систему для генерации Python-скриптов,
+которые выполняют различные диагностические команды
+на удаленном сервере через SSH.
+
+Веб-сервер (Flask) для генерации диагностических скриптов через HTTP API.
+"""
+from typing import Any, Dict
+
 from flask import Flask, render_template, request, jsonify
 from test import ConnectGenerator
 import random
@@ -16,12 +25,14 @@ app = Flask(__name__)
 
 
 @app.route("/", methods=["GET"])
-def index_page():
+def index_page() -> str:
+    """Отображает главную страницу веб-интерфейса."""
     return render_template("index1.html")
 
 
 @app.route("/execute", methods=["POST"])
-def execute_command():
+def execute_command() -> Dict[str, Any]:
+    """Обрабатывает POST-запрос для генерации скрипта."""
     try:
         data = request.json
         gen = ConnectGenerator()
