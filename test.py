@@ -1,11 +1,17 @@
 import random
 import os
-from test_gen_pattern import (BASE, SSH, PING, IFCONFIG, NETSTAT, NMAP, DF, HTOP, UNAME,
-    LSB_RELEASE, FREE, UPTIME, WHOIS, LSCPU, LSBLK, JOURNALCTL, DMESG, VMSTAT,
-    CALL_SSH, CALL_PING, CALL_IFCONFIG, CALL_NETSTAT, CALL_NMAP, CALL_DF,
-    CALL_HTOP, CALL_UNAME, CALL_LSB_RELEASE, CALL_FREE, CALL_UPTIME,
-    CALL_WHOIS, CALL_LSCPU, CALL_LSBLK, CALL_JOURNALCTL, CALL_DMESG, CALL_VMSTAT,
-    OBJ_CREATE)
+from test_gen_pattern import (BASE, SSH, PING, IFCONFIG, NETSTAT, NMAP, DF,
+                              HTOP, UNAME,
+                              LSB_RELEASE, FREE, UPTIME, WHOIS, LSCPU, LSBLK,
+                              JOURNALCTL, DMESG, VMSTAT,
+                              CALL_SSH, CALL_PING, CALL_IFCONFIG, CALL_NETSTAT,
+                              CALL_NMAP, CALL_DF,
+                              CALL_HTOP, CALL_UNAME, CALL_LSB_RELEASE,
+                              CALL_FREE, CALL_UPTIME,
+                              CALL_WHOIS, CALL_LSCPU, CALL_LSBLK,
+                              CALL_JOURNALCTL, CALL_DMESG, CALL_VMSTAT,
+                              OBJ_CREATE)
+
 
 class ConnectGenerator:
 
@@ -40,40 +46,39 @@ class ConnectGenerator:
         self.port = input('Укажите порт (по умолчанию 22): ') or '22'
         self.password = input('Укажите пароль: ')
 
-
     def generate(self):
-            os.makedirs('generate', exist_ok=True)
-            filename = f'generate/NPC_{random.randint(1000, 9999)}.py'
+        os.makedirs('generate', exist_ok=True)
+        filename = f'generate/NPC_{random.randint(1000, 9999)}.py'
 
-            with open(filename, 'w') as file:
-                file.write(BASE)
+        with open(filename, 'w') as file:
+            file.write(BASE)
 
-                calls = []
-                for action in self.selected_actions:
-                    if action in self.actions_map:
-                        _, template, call = self.actions_map[action]
-                        if '{hostname}' in template:
-                            file.write(template.format(hostname=self.hostname))
-                        elif '{username}' in template:
-                            file.write(template.format(
-                                username=self.username,
-                                hostname=self.hostname,
-                                port=self.port
-                            ))
-                        else:
-                            file.write(template)
-                        calls.append(call)
+            calls = []
+            for action in self.selected_actions:
+                if action in self.actions_map:
+                    _, template, call = self.actions_map[action]
+                    if '{hostname}' in template:
+                        file.write(template.format(hostname=self.hostname))
+                    elif '{username}' in template:
+                        file.write(template.format(
+                            username=self.username,
+                            hostname=self.hostname,
+                            port=self.port
+                        ))
+                    else:
+                        file.write(template)
+                    calls.append(call)
 
-                file.write(OBJ_CREATE.format(
-                    username=self.username,
-                    hostname=self.hostname,
-                    port=self.port,
-                    password=self.password
-                ))
-                file.write(''.join(calls))
+            file.write(OBJ_CREATE.format(
+                username=self.username,
+                hostname=self.hostname,
+                port=self.port,
+                password=self.password
+            ))
+            file.write(''.join(calls))
 
-            return (f"\nФайл {filename} успешно создан!"
-                    f"\nДля запуска выполните: {filename}")
+        return (f"\nФайл {filename} успешно создан!"
+                f"\nДля запуска выполните: {filename}")
 
 
 if __name__ == "__main__":

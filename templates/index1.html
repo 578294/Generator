@@ -133,12 +133,21 @@
             <h3>Select Command:</h3>
             <button class="action-btn" onclick="executeCommand('PING')">PING</button>
             <button class="action-btn" onclick="executeCommand('IFCONFIG')">IFCONFIG</button>
-            <button class="action-btn" onclick="executeCommand('SSH')">SSH Connection</button>
             <button class="action-btn" onclick="executeCommand('NETSTAT')">NETSTAT</button>
             <button class="action-btn" onclick="executeCommand('DF')">Disk Usage</button>
             <button class="action-btn" onclick="executeCommand('NMAP')">Port Scan (NMAP)</button>
             <button class="action-btn" onclick="executeCommand('UNAME')">System Info</button>
             <button class="action-btn" onclick="executeCommand('FREE')">Memory Usage</button>
+            <button class="action-btn" onclick="executeCommand('LSB_RELEASE')">LSB Release</button>
+            <button class="action-btn" onclick="executeCommand('FREE')">Free Memory</button>
+            <button class="action-btn" onclick="executeCommand('UPTIME')">Time of System Work</button>
+            <button class="action-btn" onclick="executeCommand('WHOIS')">The name of domain user</button>
+            <button class="action-btn" onclick="executeCommand('LSCPU')">CPU Info</button>
+            <button class="action-btn" onclick="executeCommand('LSBLK')">List of block devices</button>
+            <button class="action-btn" onclick="executeCommand('JOURNALCTL')">System logs</button>
+            <button class="action-btn" onclick="executeCommand('DMESG')">System Core Messages</button>
+            <button class="action-btn" onclick="executeCommand('VMSTAT')">Real-time system statistics</button>
+
         </div>
 
         <div class="loading" id="loadingIndicator">
@@ -178,38 +187,40 @@
 
         async function executeCommand(action) {
             const hostname = document.getElementById('hostname').value;
-            const port = document.getElementById('port').value || '22'; // Default to 22 if empty
+            const port = document.getElementById('port').value || '22';
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Show loading indicator
+            
             document.getElementById('loadingIndicator').style.display = 'block';
             document.getElementById('results').style.display = 'none';
 
             try {
-                const formData = new FormData();
-                formData.append('hostname', hostname);
-                formData.append('port', port);
-                formData.append('username', username);
-                formData.append('password', password);
-                formData.append('action', action);
-
-                const response = await fetch('/', {
+                const response = await fetch('/execute', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        hostname: hostname,
+                        port: port,
+                        username: username,
+                        password: password,
+                        action: action
+                    })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                
+                if (data.status === "error") {
+                    throw new Error(data.error);
                 }
 
-                const data = await response.text();
-                
-                document.getElementById('commandOutput').textContent = data;
+                document.getElementById('commandOutput').textContent = data.output;
                 document.getElementById('results').style.display = 'block';
                 showMessage('successMessage', 'Command executed successfully');
             } catch (error) {
-                showMessage('errorMessage', 'Error executing command: ' + error.message);
+                showMessage('errorMessage', 'Error: ' + error.message);
                 console.error('Error:', error);
             } finally {
                 document.getElementById('loadingIndicator').style.display = 'none';
