@@ -60,7 +60,7 @@ class ConnectGenerator:
         os.makedirs('generate', exist_ok=True)
         filename = f'generate/NPC_{random.randint(1000, 9999)}.py'
 
-        with open(filename, 'w') as file:
+        with open(filename, 'w', encoding='utf-8') as file:
             file.write(BASE)
 
             calls = []
