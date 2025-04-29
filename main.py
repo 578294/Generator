@@ -7,7 +7,7 @@
 
 import random
 import os
-from test_gen_pattern import (BASE, SSH, PING, IFCONFIG, NETSTAT, NMAP, DF,
+from gen_pattern import (BASE, SSH, PING, IFCONFIG, NETSTAT, NMAP, DF,
                               HTOP, UNAME,
                               LSB_RELEASE, FREE, UPTIME, WHOIS, LSCPU, LSBLK,
                               JOURNALCTL, DMESG, VMSTAT,

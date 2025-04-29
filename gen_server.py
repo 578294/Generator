@@ -8,10 +8,10 @@
 from typing import Any, Dict
 
 from flask import Flask, render_template, request, jsonify
-from test import ConnectGenerator
+from main import ConnectGenerator
 import random
 import os
-from test_gen_pattern import (
+from gen_pattern import (
     BASE, SSH, PING, IFCONFIG, NETSTAT, NMAP, DF, HTOP, UNAME,
     LSB_RELEASE, FREE, UPTIME, WHOIS, LSCPU, LSBLK, JOURNALCTL, DMESG, VMSTAT,
     CALL_SSH, CALL_PING, CALL_IFCONFIG, CALL_NETSTAT, CALL_NMAP, CALL_DF,
