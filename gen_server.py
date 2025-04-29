@@ -43,23 +43,11 @@ def execute_command() -> Dict[str, Any]:
         action = data.get("action", "SSH")
 
         action_map = {
-            'PING': '2',
-            'IFCONFIG': '3',
-            'SSH': '1',
-            'NETSTAT': '4',
-            'NMAP': '5',
-            'DF': '6',
-            'HTOP': '7',
-            'UNAME': '8',
-            'LSB_RELEASE': '9',
-            'FREE': '10',
-            'UPTIME': '11',
-            'WHOIS': '12',
-            'LSCPU': '13',
-            'LSBLK': '14',
-            'JOURNALCTL': '15',
-            'DMESG': '16',
-            'VMSTAT': '17'
+            action_name: str(i + 1) for i, action_name in enumerate([
+                'PING', 'IFCONFIG', 'SSH', 'NETSTAT', 'NMAP', 'DF', 'HTOP',
+                'UNAME', 'LSB_RELEASE', 'FREE', 'UPTIME',
+                'WHOIS', 'LSCPU', 'LSBLK', 'JOURNALCTL', 'DMESG', 'VMSTAT'
+            ])
         }
 
         gen.selected_actions = [action_map.get(action, '1')]
@@ -90,4 +78,4 @@ def execute_command() -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

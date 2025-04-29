@@ -8,16 +8,16 @@
 import random
 import os
 from gen_pattern import (BASE, SSH, PING, IFCONFIG, NETSTAT, NMAP, DF,
-                              HTOP, UNAME,
-                              LSB_RELEASE, FREE, UPTIME, WHOIS, LSCPU, LSBLK,
-                              JOURNALCTL, DMESG, VMSTAT,
-                              CALL_SSH, CALL_PING, CALL_IFCONFIG, CALL_NETSTAT,
-                              CALL_NMAP, CALL_DF,
-                              CALL_HTOP, CALL_UNAME, CALL_LSB_RELEASE,
-                              CALL_FREE, CALL_UPTIME,
-                              CALL_WHOIS, CALL_LSCPU, CALL_LSBLK,
-                              CALL_JOURNALCTL, CALL_DMESG, CALL_VMSTAT,
-                              OBJ_CREATE)
+                         HTOP, UNAME,
+                         LSB_RELEASE, FREE, UPTIME, WHOIS, LSCPU, LSBLK,
+                         JOURNALCTL, DMESG, VMSTAT,
+                         CALL_SSH, CALL_PING, CALL_IFCONFIG, CALL_NETSTAT,
+                         CALL_NMAP, CALL_DF,
+                         CALL_HTOP, CALL_UNAME, CALL_LSB_RELEASE,
+                         CALL_FREE, CALL_UPTIME,
+                         CALL_WHOIS, CALL_LSCPU, CALL_LSBLK,
+                         CALL_JOURNALCTL, CALL_DMESG, CALL_VMSTAT,
+                         OBJ_CREATE)
 
 
 class ConnectGenerator:
@@ -25,24 +25,17 @@ class ConnectGenerator:
 
     def settings(self) -> None:
         """Запрашивает у пользователя настройки для генерации скрипта."""
+
+        actions = [
+            'SSH', 'PING', 'IFCONFIG', 'NETSTAT', 'NMAP', 'DF', 'HTOP',
+            'UNAME', 'LSB_RELEASE', 'FREE', 'UPTIME', 'WHOIS', 'LSCPU',
+            'LSBLK', 'JOURNALCTL', 'DMESG', 'VMSTAT'
+        ]
+
         self.actions_map = {
-            '1': ('SSH', SSH, CALL_SSH),
-            '2': ('PING', PING, CALL_PING),
-            '3': ('IFCONFIG', IFCONFIG, CALL_IFCONFIG),
-            '4': ('NETSTAT', NETSTAT, CALL_NETSTAT),
-            '5': ('NMAP', NMAP, CALL_NMAP),
-            '6': ('DF', DF, CALL_DF),
-            '7': ('HTOP', HTOP, CALL_HTOP),
-            '8': ('UNAME', UNAME, CALL_UNAME),
-            '9': ('LSB_RELEASE', LSB_RELEASE, CALL_LSB_RELEASE),
-            '10': ('FREE', FREE, CALL_FREE),
-            '11': ('UPTIME', UPTIME, CALL_UPTIME),
-            '12': ('WHOIS', WHOIS, CALL_WHOIS),
-            '13': ('LSCPU', LSCPU, CALL_LSCPU),
-            '14': ('LSBLK', LSBLK, CALL_LSBLK),
-            '15': ('JOURNALCTL', JOURNALCTL, CALL_JOURNALCTL),
-            '16': ('DMESG', DMESG, CALL_DMESG),
-            '17': ('VMSTAT', VMSTAT, CALL_VMSTAT)
+            str(i + 1): (
+                action, globals()[action], globals()[f'CALL_{action}'])
+            for i, action in enumerate(actions)
         }
 
         print("Доступные действия (введите номера через запятую):")
