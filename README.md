@@ -36,15 +36,17 @@ pip install -r requirements.txt
 ```
 
 ## Использование
-
+```
 python gen_server.py
 Откройте в браузере: http://localhost:5000
+```
 
 ## Зависимости
-
+```
 Python 3.7+
 Flask
 Paramiko
+```
 
 # Лицензия
 MIT License © 2025 578294
